@@ -13,6 +13,8 @@ typedef void (*stringConsumerFn)(const char*);
 
 class ILogger {
 public:
+    static ILogger *logger;
+
     enum Level: int {
         INFO = 0,
         DEBUG = 1,
@@ -66,7 +68,7 @@ public:
                 if (std::count(_levels.begin(), _levels.end(), level))
                 {
                     char buffer[256];
-                    sprintf(buffer, "%s/  %s", getLevelString(level), message);
+                    sprintf(buffer, "%s/ %s", getLevelString(level), message);
                     _consumer(buffer);
                 }
             }
@@ -86,6 +88,8 @@ public:
 protected:
 
 };
+
+
 
 
 #endif //RESPECTRAL_ILOGGER_H

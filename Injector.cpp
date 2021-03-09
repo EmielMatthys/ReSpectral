@@ -4,44 +4,45 @@
 
 #include "Injector.h"
 #include "Logger/ILogger.h"
+#include "Module.h"
 #include <iostream>
 #include <dlfcn.h>
 
-Injector *Injector::_instance = nullptr;
+Injector    *Injector::_instance = nullptr;
+ILogger     *ILogger::logger     = nullptr;
 
 Injector::Injector()
 {
-    auto logger = ILogger::consoleLogger({ILogger::INFO,
+    ILogger::logger = ILogger::consoleLogger({ILogger::INFO,
             ILogger::DEBUG,
             ILogger::WARN,
             ILogger::ERROR});
 
-    logger->logMessage("is being loaded", ILogger::INFO);
+    ILogger::logger->logMessage("Is being loaded", ILogger::INFO);
 
-    void* library_handle = dlopen("tf/bin/client.so", RTLD_NOLOAD | RTLD_NOW);
-
-    void* interfaceregs_symb = dlsym(library_handle, "s_pInterfaceRegs");
+    auto client_module = Module("tf/bin/client.so");
+    auto interfaceregs_symb =  client_module.getSymbol("s_pInterfaceRegs");
 
     if (interfaceregs_symb)
     {
-        dlclose(library_handle);
-        logger->logMessage("s_pInterfaceRegs found!", ILogger::DEBUG);
+        client_module.close();
+        ILogger::logger->logMessage("s_pInterfaceRegs found!", ILogger::DEBUG);
     }
     else
     {
-        void* createinterface_symb = dlsym(library_handle, "CreateInterface");
-        dlclose(library_handle);
+        auto createinterface_symb =  client_module.getSymbol("CreateInterface");
+        client_module.close();
 
         if (!createinterface_symb)
         {
-            logger->logMessage("CreateInterface symbol not found!", ILogger::DEBUG);
+            ILogger::logger->logMessage("CreateInterface symbol not found!", ILogger::DEBUG);
         }
 
         auto client_factory = reinterpret_cast<CreateInterfaceFn>(createinterface_symb);
         g_clientdll = client_factory("VClient017", nullptr);
     }
 
-    logger->logMessage("Loaded successfully", ILogger::INFO);
+    ILogger::logger->logMessage("Loaded successfully", ILogger::INFO);
 }
 
 
