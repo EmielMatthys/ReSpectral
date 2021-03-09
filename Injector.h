@@ -8,14 +8,16 @@
 typedef void *(*CreateInterfaceFn)(const char *, int *);
 static void *g_clientdll = nullptr;
 
-
 class Injector {
 public:
-    Injector() = default;
-    static void Initialize();
+    static Injector* instance();
+
+protected:
+    Injector();
 
 private:
-    static bool _initialized;
+    static Injector *_instance;
+
 };
 
 

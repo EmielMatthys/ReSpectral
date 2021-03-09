@@ -22,7 +22,7 @@ public:
 
     virtual void logMessage(const char *message, Level level) = 0;
 
-    ILogger* setNextLogger(ILogger *nextLogger)
+    ILogger* appendLogger(ILogger *nextLogger)
     {
         // Define anonymous class that forwards logMessage calls to the provided nextLogger
         class _ : public ILogger {
@@ -50,11 +50,24 @@ public:
                                                                             _consumer(consumer)
             {}
 
+            const char* getLevelString(Level l)
+            {
+                switch (l) {
+                    case INFO: return "I";
+                    case DEBUG: return "D";
+                    case WARN: return "W";
+                    case ERROR: return "E";
+                }
+                return nullptr;
+            }
+
             void logMessage(const char *message, Level level) override
             {
                 if (std::count(_levels.begin(), _levels.end(), level))
                 {
-                    _consumer(message);
+                    char buffer[256];
+                    sprintf(buffer, "%s/  %s", getLevelString(level), message);
+                    _consumer(buffer);
                 }
             }
 
@@ -65,12 +78,11 @@ public:
         return new _(std::move(levels), consumer);
     };
 
-    static ILogger* consoleLogger(Level levels...) {
-        std::vector<Level> vLevels = {};
-        vLevels.push_back(levels);
-        return write(vLevels, [](auto message) { printf(" - %s", message); });
-    }
+    static ILogger* consoleLogger(std::vector<Level> levels) {
 
+        return write(std::move(levels), [](auto message) { printf("[ReSPECTRAL] - %s\n", message); });
+    }
+    
 protected:
 
 };

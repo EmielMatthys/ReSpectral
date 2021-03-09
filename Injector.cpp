@@ -7,38 +7,46 @@
 #include <iostream>
 #include <dlfcn.h>
 
-void Injector::Initialize()
+Injector *Injector::_instance = nullptr;
+
+Injector::Injector()
 {
-    if (_initialized) return;
-    _initialized = true;
+    auto logger = ILogger::consoleLogger({ILogger::INFO,
+            ILogger::DEBUG,
+            ILogger::WARN,
+            ILogger::ERROR});
 
-    printf("[RESPECTRAL] is being loaded\n");
-
-    auto logger = ILogger::consoleLogger(ILogger::Level::INFO);
+    logger->logMessage("is being loaded", ILogger::INFO);
 
     void* library_handle = dlopen("tf/bin/client.so", RTLD_NOLOAD | RTLD_NOW);
-//    nullcheck(library_handle, "client.so");
 
     void* interfaceregs_symb = dlsym(library_handle, "s_pInterfaceRegs");
-
-//    nullcheck(interfaceregs_symb, "s_pInterfaceRegs");
 
     if (interfaceregs_symb)
     {
         dlclose(library_handle);
-        printf("[RESPECTRAL]: s_pInterfaceRegs found!\n");
+        logger->logMessage("s_pInterfaceRegs found!", ILogger::DEBUG);
     }
     else
     {
         void* createinterface_symb = dlsym(library_handle, "CreateInterface");
         dlclose(library_handle);
 
-        if (createinterface_symb)
+        if (!createinterface_symb)
         {
-            printf("[RESPECTRAL]: CreateInterface symbol not found!");
+            logger->logMessage("CreateInterface symbol not found!", ILogger::DEBUG);
         }
 
         auto client_factory = reinterpret_cast<CreateInterfaceFn>(createinterface_symb);
         g_clientdll = client_factory("VClient017", nullptr);
     }
+
+    logger->logMessage("Loaded successfully", ILogger::INFO);
+}
+
+
+Injector *Injector::instance()
+{
+    if (_instance == nullptr) _instance = new Injector();
+    return static_cast<Injector *>(_instance);
 }
