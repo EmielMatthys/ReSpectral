@@ -3,7 +3,7 @@
 //
 
 #include "Module.h"
-#include "Logger/ILogger.h"
+#include "spdlog/spdlog.h"
 #include <dlfcn.h>
 
 Module::Module(const char *filename) : _filename(filename)
@@ -13,7 +13,7 @@ Module::Module(const char *filename) : _filename(filename)
     {
         char message[128];
         snprintf(message, sizeof(message), "module '%s' could not be opened!", filename);
-        ILogger::logger->logMessage(message, ILogger::ERROR);
+        spdlog::error(message);
     }
 }
 
@@ -24,7 +24,7 @@ void *Module::getSymbol(const char *symbolName)
     {
         char message[128];
         snprintf(message, sizeof(message), "symbol '%s' of module '%s' could not be opened!", symbolName, _filename);
-        ILogger::logger->logMessage(message, ILogger::ERROR);
+        spdlog::warn(message);
     }
     return result;
 }
