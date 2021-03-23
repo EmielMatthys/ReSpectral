@@ -5,8 +5,8 @@
 #ifndef RESPECTRAL_INJECTOR_H
 #define RESPECTRAL_INJECTOR_H
 
-typedef void *(*CreateInterfaceFn)(const char *, int *);
 static void *g_clientdll = nullptr;
+static void *g_cvar      = nullptr;
 
 class Injector {
 public:

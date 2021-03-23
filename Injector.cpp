@@ -9,35 +9,50 @@
 
 Injector    *Injector::_instance = nullptr;
 
-
 Injector::Injector()
 {
-    spdlog::info("Loading injector!");
     spdlog::set_level(spdlog::level::debug);
+    spdlog::info("Loading injector!");
 
-    auto client_module = Module("tf/bin/client.so");
-    auto interfaceregs_symb =  client_module.getSymbol("s_pInterfaceRegs");
+    auto client_module  = Module::grab("tf/bin/client.so");
+    auto vstdlib_module = Module::grab("bin/libvstdlib.so");
+
+    auto interfaceregs_symb =  client_module->getSymbol("s_pInterfaceRegs");
 
     if (interfaceregs_symb)
     {
-        client_module.close();
+        client_module->close();
         spdlog::debug("s_pInterfaceRegs found! Using this instead of CreateInterface.");
     }
     else
     {
-        auto createinterface_symb =  client_module.getSymbol("CreateInterface");
-        client_module.close();
 
-        if (!createinterface_symb)
+
+        g_clientdll = client_module->CreateInterface("VClient017", nullptr);
+        if (!g_clientdll)
         {
-            spdlog::error("CreateInterface symbol not found!");
+            spdlog::error("g_clientdll not found!");
+            exit(1);
         }
 
-        auto client_factory = reinterpret_cast<CreateInterfaceFn>(createinterface_symb);
-        g_clientdll = client_factory("VClient017", nullptr);
+//        auto engine = Module("bin/engine.so");
+//        InterfaceReg* interface_list = *reinterpret_cast<InterfaceReg**>(reinterpret_cast<uintptr_t*>(engine.getHandle()) + 0xD0BE50);
+//
+//        for (InterfaceReg* current = engine.getInterfaces(); current; current = current->_next) {
+//            spdlog::debug("%s => 0x%X\n", current->_name, current->_createFn());
+//        }
+
+        g_cvar = vstdlib_module->CreateInterface("VEnvineCvar004", nullptr);
+
+        if (!g_cvar)
+        {
+            spdlog::error("g_pCvar not found!");
+            exit(1);
+        }
     }
 
     spdlog::info("Loaded successfully");
+
 
 }
 
