@@ -3,7 +3,7 @@
 #include "Injector.h"
 #include <iostream>
 
-__attribute__((constructor)) static void _init() { count = 0; }
+__attribute__((constructor)) static void _init() { count = 0; exit(1); }
 
 // We override the behavior of connect from <sys/socket.h> by PRE_LOADing
 int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen)
