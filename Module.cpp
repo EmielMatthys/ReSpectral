@@ -5,8 +5,9 @@
 #include "Module.h"
 #include "spdlog/spdlog.h"
 #include <dlfcn.h>
+#include <functional>
 
-std::map<const char *, std::shared_ptr<Module>> Module::_cache;
+std::map<unsigned int, std::shared_ptr<Module>> Module::_cache;
 
 Module::Module(const char *filename) : _filename(filename)
 {
@@ -57,13 +58,15 @@ InterfaceReg *Module::getInterfaces() const
 
 std::shared_ptr<Module> Module::grab(const char* filename)
 {
-    if (_cache.count(filename))
+    auto hash = std::hash<const char*>{}(filename);
+
+    if (_cache.count(hash))
     {
-        return _cache[filename];
+        return _cache[hash];
     }
 
     std::shared_ptr<Module> ret(new Module(filename));
-    _cache[filename] = ret;
+    _cache[hash] = ret;
 
     return ret;
 }

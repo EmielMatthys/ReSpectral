@@ -21,7 +21,7 @@ private:
     const char  *_filename;
     void        *_handle;
 
-    static std::map<const char *, std::shared_ptr<Module>> _cache;
+    static std::map<unsigned int, std::shared_ptr<Module>> _cache;
 
     Module(const char *filename);
 
