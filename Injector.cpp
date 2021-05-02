@@ -34,6 +34,7 @@ void Injector::inject()
     auto client_module  = Module::grab("tf/bin/client.so");
     auto vstdlib_module = Module::grab("bin/libvstdlib.so");
     auto vgui2_module   = Module::grab("bin/vgui2.so");
+    auto surface_module = Module::grab("bin/vguimatsurface.so");
 
     auto interfaceregs_symb =  client_module->getSymbol("s_pInterfaceRegs");
 
@@ -46,8 +47,9 @@ void Injector::inject()
     {
 
         g_clientdll = grabCriticalInterface(client_module, "VClient017");
-        g_panels    = grabCriticalInterface(vgui2_module, "VGUI_Panel009");
+        g_panels    = static_cast<IPanel *>(grabCriticalInterface(vgui2_module, "VGUI_Panel009"));
         g_cvar      = grabCriticalInterface(vstdlib_module, "VEngineCvar004");
+        g_surface   = static_cast<ISurface *>(grabCriticalInterface(surface_module, "VGUI_Surface030"));
 
 
 //        auto engine = Module("bin/engine.so");

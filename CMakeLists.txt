@@ -10,6 +10,8 @@ add_library(RESPECTRAL SHARED
         globals.h
         vtablehook.h
         getvfunc.h
+        TF2/IPanel.h
+        TF2/ISurface.h
         )
 
 target_link_directories(RESPECTRAL PUBLIC spdlog-1.8.2/build)

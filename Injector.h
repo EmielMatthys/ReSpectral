@@ -6,10 +6,13 @@
 #define RESPECTRAL_INJECTOR_H
 
 #include <memory>
+#include "TF2/IPanel.h"
+#include "TF2/ISurface.h"
 
-static void *g_clientdll = nullptr;
-static void *g_cvar      = nullptr;
-static void *g_panels    = nullptr;
+static void *g_clientdll   = nullptr;
+static void *g_cvar        = nullptr;
+static IPanel *g_panels    = nullptr;
+static ISurface *g_surface = nullptr;
 
 class Injector {
 public:
