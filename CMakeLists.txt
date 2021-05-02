@@ -8,7 +8,9 @@ add_library(RESPECTRAL SHARED
         Injector.cpp Injector.h
         Module.cpp Module.h ModuleManager.cpp ModuleManager.h
         globals.h
-        vtablehook.h)
+        vtablehook.h
+        getvfunc.h
+        )
 
 target_link_directories(RESPECTRAL PUBLIC spdlog-1.8.2/build)
 target_include_directories(RESPECTRAL PUBLIC spdlog-1.8.2/include)
