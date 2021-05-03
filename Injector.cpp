@@ -6,6 +6,9 @@
 #include "Module.h"
 #include <iostream>
 #include "spdlog/spdlog.h"
+#include "vtablehook.h"
+#include "hooks/Panel.h"
+#include "hexdump.h"
 
 //std::shared_ptr<Injector> Injector::_instance = nullptr;
 
@@ -51,6 +54,12 @@ void Injector::inject()
         g_cvar      = grabCriticalInterface(vstdlib_module, "VEngineCvar004");
         g_surface   = static_cast<ISurface *>(grabCriticalInterface(surface_module, "VGUI_Surface030"));
 
+
+        // Hook panel
+        hooks::original_PaintTraverse =
+                (hooks::Fn_PaintTraverse) vtablehook_hook(g_panels, (void *) hooks::Panel_PaintTraverse, PANEL_PAINT_TRAVERSE);
+
+//       std::cout << (Hexdump(*((int **) g_panels), 2048)) << std::endl;
 
 //        auto engine = Module("bin/engine.so");
 //        InterfaceReg* interface_list = *reinterpret_cast<InterfaceReg**>(reinterpret_cast<uintptr_t*>(engine.getHandle()) + 0xD0BE50);

@@ -12,7 +12,8 @@ add_library(RESPECTRAL SHARED
         getvfunc.h
         TF2/IPanel.h
         TF2/ISurface.h
-        )
+        hooks/Panel.h
+        hexdump.h)
 
 target_link_directories(RESPECTRAL PUBLIC spdlog-1.8.2/build)
 target_include_directories(RESPECTRAL PUBLIC spdlog-1.8.2/include)

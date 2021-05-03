@@ -13,7 +13,7 @@ public:
     const char *GetName(unsigned int vguiPanel)
     {
         typedef const char* ( * OriginalFn )( void*, unsigned int );
-        return getvfunc<OriginalFn>( this, 36 )( this, vguiPanel );
+        return getvfunc<OriginalFn>( this, 37 )( this, vguiPanel );
     }
 };
 
