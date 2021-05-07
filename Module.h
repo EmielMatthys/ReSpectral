@@ -39,12 +39,12 @@ public:
 
 };
 
-
+typedef void* (*CreateFnFn)();
 class InterfaceReg {
 public:
+    CreateFnFn _createFn;
     char *_name;
     InterfaceReg *_next;
-    void *_createFn();
 };
 
 

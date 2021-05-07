@@ -6,6 +6,8 @@
 #define RESPECTRAL_PANEL_H
 
 #include "../TF2/IPanel.h"
+#include <stdarg.h>
+#include <stdio.h>
 
 #define RED(COLORCODE)	((int) ( COLORCODE >> 24) )
 #define BLUE(COLORCODE)	((int) ( COLORCODE >> 8 ) & 0xFF )
@@ -26,6 +28,33 @@ void drawString( int x, int y, unsigned int dwColor, const wchar_t *pszText)
     g_surface->DrawPrintText( pszText, wcslen( pszText ) );
 }
 
+void drawString( int x, int y, unsigned int dwColor, const char *pszText, ... )
+{
+    if( pszText == NULL )
+        return;
+
+    va_list va_alist;
+    char szBuffer[1024] = { '\0' };
+    wchar_t szString[1024] = { '\0' };
+
+    va_start( va_alist, pszText );
+    vsprintf( szBuffer, pszText, va_alist );
+    va_end( va_alist );
+
+    swprintf( szString, 1024, L"%s", szBuffer );
+
+    g_surface->DrawSetTextPos( x, y );
+    g_surface->DrawSetTextFont( m_Font );
+    g_surface->DrawSetTextColor( RED(dwColor), GREEN(dwColor), BLUE(dwColor), ALPHA(dwColor) );
+    g_surface->DrawPrintText( szString, wcslen( szString ) );
+}
+
+void drawRect( int x, int y, int w, int h, unsigned int dwColor )
+{
+    g_surface->DrawSetColor( RED(dwColor), GREEN(dwColor), BLUE(dwColor), ALPHA(dwColor) );
+    g_surface->DrawFilledRect( x, y, x + w, y + h );
+}
+
 namespace hooks
 {
     #define PANEL_PAINT_TRAVERSE 42
@@ -36,8 +65,7 @@ namespace hooks
     {
         original_PaintTraverse(thisptr, panelIndex, forceRepaint, allowForce);
         static unsigned int vguiMatSystemTopPanel;
-        static int x = 0;
-//        spdlog::debug("inside hooked! {0:d}", panelIndex);
+//        drawString( 200, 200, 0xFFFFFFFF, "Welcome to RESPECTRAL"); //Remove this if you want.
         if (!vguiMatSystemTopPanel)
         {
             const char* szName = g_panels->GetName(panelIndex);
@@ -46,17 +74,14 @@ namespace hooks
                 spdlog::debug("inside MatSystemTopPanel!");
                 vguiMatSystemTopPanel = panelIndex;
                 m_Font = g_surface->CreateFont( );
-                g_surface->SetFontGlyphSet( m_Font, "Arial", 14, 500, 0, 0, 0x200 );
+                g_surface->SetFontGlyphSet( m_Font, "Verdana", 21, 500, 0, 0, 0x200 );
             }
         }
 
         if ( vguiMatSystemTopPanel == panelIndex ) //If we're on MatSystemTopPanel, call our drawing code.
         {
-            drawString( x++, 200, 0xFFFFFFFF, reinterpret_cast<const wchar_t *>("Welcome to RESPECTRAL")); //Remove this if you want.
-            if (x > 1920)
-            {
-                x = -2000;
-            }
+            drawString( 200, 200, 0xFFFFFFFF, "Welcome to RESPECTRAL"); //Remove this if you want.
+            drawRect(0, 0, 35, 35,0xFFFFFFFF);
         }
     }
 }

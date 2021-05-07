@@ -59,14 +59,17 @@ void Injector::inject()
         hooks::original_PaintTraverse =
                 (hooks::Fn_PaintTraverse) vtablehook_hook(g_panels, (void *) hooks::Panel_PaintTraverse, PANEL_PAINT_TRAVERSE);
 
-//       std::cout << (Hexdump(*((int **) g_panels), 2048)) << std::endl;
+//       std::cout << (Hexdump(*((int **) g_surface), 3000)) << std::endl;
+//        InterfaceReg* current = surface_module->getInterfaces();
+//        current->_createFn();
 
-//        auto engine = Module("bin/engine.so");
-//        InterfaceReg* interface_list = *reinterpret_cast<InterfaceReg**>(reinterpret_cast<uintptr_t*>(engine.getHandle()) + 0xD0BE50);
-//
-//        for (InterfaceReg* current = engine.getInterfaces(); current; current = current->_next) {
-//            spdlog::debug("%s => 0x%X\n", current->_name, current->_createFn());
-//        }
+        for (InterfaceReg* current = vgui2_module->getInterfaces(); current; current = current->_next) {
+            spdlog::debug("{} => {}", current->_name, current->_createFn());
+        }
+
+        for (InterfaceReg* current = surface_module->getInterfaces(); current; current = current->_next) {
+            spdlog::debug("{} => {}", current->_name, current->_createFn());
+        }
 
     }
 
