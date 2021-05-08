@@ -1,7 +1,12 @@
 #include <dlfcn.h>
-#include "RESPECTRAL.h"
 #include "Injector.h"
 #include <iostream>
+#include <sys/socket.h>
+
+typedef int (*connect_type)(int sockfd, const struct sockaddr *addrm, socklen_t addrlen);
+static connect_type real_connect = nullptr;
+
+static int count;
 
 __attribute__((constructor)) static void _init() { count = 0; }
 

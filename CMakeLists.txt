@@ -4,7 +4,7 @@ project(RESPECTRAL VERSION 0.1.0)
 add_subdirectory(spdlog-1.8.2)
 
 add_library(RESPECTRAL SHARED
-        RESPECTRAL.cpp RESPECTRAL.h
+        RESPECTRAL.cpp
         Injector.cpp Injector.h
         Module.cpp Module.h ModuleManager.cpp ModuleManager.h
         globals.h
