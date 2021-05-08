@@ -41,6 +41,8 @@ void Injector::inject()
     auto vgui2_module   = Module::grab("bin/vgui2.so");
     auto surface_module = Module::grab("bin/vguimatsurface.so");
     auto engine_module = Module::grab("bin/engine.so");
+    auto input_module  = Module::grab("bin/inputsystem.so");
+
 
     auto interfaceregs_symb =  client_module->getSymbol("s_pInterfaceRegs");
 
@@ -58,13 +60,14 @@ void Injector::inject()
         g_surface   = grabCriticalInterface<ISurface*>(surface_module, "VGUI_Surface030");
         g_engineClient = grabCriticalInterface<EngineClient*>(engine_module, "VEngineClient014");
         g_entityList   = grabCriticalInterface<EntityList*>(client_module, "VClientEntityList003");
+        g_inputSystem  = grabCriticalInterface<IInputSystem*>(input_module, "InputSystemVersion001");
 
 
         // Hook panel
         hooks::original_PaintTraverse =
                 (hooks::Fn_PaintTraverse) vtablehook_hook(g_panels, (void *) hooks::Panel_PaintTraverse, PANEL_PAINT_TRAVERSE);
 
-        client_module->walkInterfaces();
+        input_module->walkInterfaces();
 
     }
 

@@ -10,6 +10,7 @@
 #include "TF2/ISurface.h"
 #include "TF2/EngineClient.h"
 #include "TF2/EntityList.h"
+#include "TF2/IInputSystem.h"
 
 static void *g_clientdll   = nullptr;
 static void *g_cvar        = nullptr;
@@ -17,6 +18,7 @@ static IPanel *g_panels    = nullptr;
 static ISurface *g_surface = nullptr;
 static EngineClient *g_engineClient = nullptr;
 static EntityList *g_entityList     = nullptr;
+static IInputSystem *g_inputSystem  = nullptr;
 
 class Injector {
 public:

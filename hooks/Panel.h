@@ -32,7 +32,8 @@ namespace hooks
 
         if ( vguiMatSystemTopPanel == panelIndex ) //If we're on MatSystemTopPanel, call our drawing code.
         {
-            draw::drawString( 200, 200, 0xFFFFFFFF, "Welcome to RESPECTRAL"); //Remove this if you want.
+            if (g_inputSystem->IsButtonDown(KEY_INSERT))
+                draw::drawString( 200, 200, 0xFFFFFFFF, "Welcome to RESPECTRAL");
 //            draw::drawRect(0, 0, 35, 35,0xFFFFFFFF);
 
         }
