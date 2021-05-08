@@ -70,3 +70,10 @@ std::shared_ptr<Module> Module::grab(const char* filename)
 
     return ret;
 }
+
+void Module::walkInterfaces() const
+{
+    for (InterfaceReg* current = getInterfaces(); current; current = current->_next) {
+        spdlog::debug("{} => {}", current->_name, current->_createFn());
+    }
+}

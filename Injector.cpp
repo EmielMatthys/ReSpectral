@@ -18,7 +18,9 @@
  * @param name
  * @return pointer to given interface of given module
  */
-void* grabCriticalInterface(const std::shared_ptr<Module>& module, const char *name)
+
+template <typename T>
+T grabCriticalInterface(const std::shared_ptr<Module>& module, const char *name)
 {
     auto interface = module->CreateInterface(name, nullptr);
     if (!interface)
@@ -26,7 +28,7 @@ void* grabCriticalInterface(const std::shared_ptr<Module>& module, const char *n
         spdlog::error("interface %s not found!");
         exit(1);
     }
-    return interface;
+    return static_cast<T>(interface);
 }
 
 void Injector::inject()
@@ -38,6 +40,7 @@ void Injector::inject()
     auto vstdlib_module = Module::grab("bin/libvstdlib.so");
     auto vgui2_module   = Module::grab("bin/vgui2.so");
     auto surface_module = Module::grab("bin/vguimatsurface.so");
+    auto engine_module = Module::grab("bin/engine.so");
 
     auto interfaceregs_symb =  client_module->getSymbol("s_pInterfaceRegs");
 
@@ -49,27 +52,19 @@ void Injector::inject()
     else
     {
 
-        g_clientdll = grabCriticalInterface(client_module, "VClient017");
-        g_panels    = static_cast<IPanel *>(grabCriticalInterface(vgui2_module, "VGUI_Panel009"));
-        g_cvar      = grabCriticalInterface(vstdlib_module, "VEngineCvar004");
-        g_surface   = static_cast<ISurface *>(grabCriticalInterface(surface_module, "VGUI_Surface030"));
+        g_clientdll = grabCriticalInterface<void*>(client_module, "VClient017");
+        g_panels    = grabCriticalInterface<IPanel*>(vgui2_module, "VGUI_Panel009");
+        g_cvar      = grabCriticalInterface<void*>(vstdlib_module, "VEngineCvar004");
+        g_surface   = grabCriticalInterface<ISurface*>(surface_module, "VGUI_Surface030");
+        g_engineClient = grabCriticalInterface<EngineClient*>(engine_module, "VEngineClient014");
+        g_entityList   = grabCriticalInterface<EntityList*>(client_module, "VClientEntityList003");
 
 
         // Hook panel
         hooks::original_PaintTraverse =
                 (hooks::Fn_PaintTraverse) vtablehook_hook(g_panels, (void *) hooks::Panel_PaintTraverse, PANEL_PAINT_TRAVERSE);
 
-//       std::cout << (Hexdump(*((int **) g_surface), 3000)) << std::endl;
-//        InterfaceReg* current = surface_module->getInterfaces();
-//        current->_createFn();
-
-        for (InterfaceReg* current = vgui2_module->getInterfaces(); current; current = current->_next) {
-            spdlog::debug("{} => {}", current->_name, current->_createFn());
-        }
-
-        for (InterfaceReg* current = surface_module->getInterfaces(); current; current = current->_next) {
-            spdlog::debug("{} => {}", current->_name, current->_createFn());
-        }
+        client_module->walkInterfaces();
 
     }
 

@@ -8,11 +8,15 @@
 #include <memory>
 #include "TF2/IPanel.h"
 #include "TF2/ISurface.h"
+#include "TF2/EngineClient.h"
+#include "TF2/EntityList.h"
 
 static void *g_clientdll   = nullptr;
 static void *g_cvar        = nullptr;
 static IPanel *g_panels    = nullptr;
 static ISurface *g_surface = nullptr;
+static EngineClient *g_engineClient = nullptr;
+static EntityList *g_entityList     = nullptr;
 
 class Injector {
 public:

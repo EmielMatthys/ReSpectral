@@ -32,6 +32,7 @@ public:
     void *getSymbol(const char* symbolName) const;
     void close();
     void *getHandle() const {return _handle;}
+    void walkInterfaces() const;
 
     InterfaceReg *getInterfaces() const;
 
