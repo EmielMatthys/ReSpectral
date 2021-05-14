@@ -14,7 +14,7 @@ enum keystate_t
     UP
 };
 
-static keystate_t insert_key_state = UP;
+static keystate_t keystate = UP;
 
 namespace hooks
 {
@@ -42,21 +42,21 @@ namespace hooks
 
         if ( vguiMatSystemTopPanel == panelIndex ) //If we're on MatSystemTopPanel, call our drawing code.
         {
+
             if (g_inputSystem->IsButtonDown(KEY_HOME))
             {
-                if (insert_key_state == UP)
+                if (keystate == UP)
                 {
                     draw::enabled = !draw::enabled;
                 }
-                insert_key_state = DOWN;
+                keystate = DOWN;
             } else
             {
-                insert_key_state = UP;
+                keystate = UP;
             }
 
             if (draw::enabled)
             {
-//                draw::drawString( 200, 200, 0xFFFFFFFF, "Welcome to RESPECTRAL");
                 for (int i = 0; i < 24; i++)
                 {
 

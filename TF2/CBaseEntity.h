@@ -20,7 +20,7 @@ public:
     Vector& GetAbsAngles( )
     {
         typedef Vector& ( * OriginalFn )( void* );
-        return getvfunc<OriginalFn>(this, 10)(this);
+        return getvfunc<OriginalFn>(this, 12)(this);
     }
     void GetWorldSpaceCenter( Vector& vWorldSpaceCenter)
     {

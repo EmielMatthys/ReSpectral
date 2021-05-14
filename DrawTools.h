@@ -65,7 +65,7 @@ namespace draw
     void drawRect( int x, int y, int w, int h, unsigned int dwColor )
     {
         g_surface->DrawSetColor( RED(dwColor), GREEN(dwColor), BLUE(dwColor), ALPHA(dwColor) );
-        g_surface->DrawFilledRect( x, y, x + w, y + h );
+        g_surface->DrawOutlinedRect( x, y, x + w, y + h );
     }
 
     bool WorldToScreen( Vector &vOrigin, Vector &vScreen )

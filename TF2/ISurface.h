@@ -13,7 +13,7 @@ public:
     void DrawSetColor(int r, int g, int b, int a)
     {
         typedef void(* OriginalFn)(void*, int, int, int, int);
-        getvfunc<OriginalFn>(this, 11)(this, r, g, b, a);
+        getvfunc<OriginalFn>(this, 10)(this, r, g, b, a);
     }
     void DrawFilledRect(int x0, int y0, int x1, int y1)
     {
