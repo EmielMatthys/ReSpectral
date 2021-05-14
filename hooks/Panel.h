@@ -57,6 +57,7 @@ namespace hooks
 
             if (draw::enabled)
             {
+                draw::OutlineRect(500, 500, 50, 50,  0xFFFFFFFF);
                 for (int i = 0; i < 24; i++)
                 {
 
@@ -89,29 +90,28 @@ namespace hooks
         Vector screenPos, worldPos;
         entity->GetWorldSpaceCenter(worldPos);
 
-        char name[64], posStr[256];
-        snprintf(name, 64, "%i", i);
-
-//                    draw::drawString( 200, 200 + i*12, 0xFFFFFFFF, name);
-        int textWidth, textHeight;
-        draw::GetTextSize(textWidth, textHeight, name);
-
-        snprintf(posStr, 256, "Pos: %f : %f", worldPos.x, worldPos.y);
-        draw::drawString(200 + textWidth + 10, 200 + i*12, 0xFFFFFFFF, posStr);
-
-        player_info_t *playerInfo;
-        g_engineClient->GetPlayerInfo(i, playerInfo);
-
-        if (!playerInfo)
-        {
-            spdlog::error("PLayerInfo was NULL");
-            return;
-        }
-
-        if (draw::WorldToScreen(worldPos, screenPos))
-        {
-            draw::drawString(static_cast<int>(screenPos.x), static_cast<int>(screenPos.y), 0xFFFFFFFF, playerInfo->name);
-        }
+//        char name[64], posStr[256];
+//        snprintf(name, 64, "%i", i);
+//
+//        int textWidth, textHeight;
+//        draw::GetTextSize(textWidth, textHeight, name);
+//
+//        snprintf(posStr, 256, "Pos: %f : %f", worldPos.x, worldPos.y);
+//        draw::drawString(200 + textWidth + 10, 200 + i*12, 0xFFFFFFFF, posStr);
+//
+//        player_info_t *playerInfo;
+//        g_engineClient->GetPlayerInfo(i, playerInfo);
+//
+//        if (!playerInfo)
+//        {
+//            spdlog::error("PLayerInfo was NULL");
+//            return;
+//        }
+//
+//        if (draw::WorldToScreen(worldPos, screenPos))
+//        {
+//            draw::drawString(static_cast<int>(screenPos.x), static_cast<int>(screenPos.y), 0xFFFFFFFF, playerInfo->name);
+//        }
     }
 }
 

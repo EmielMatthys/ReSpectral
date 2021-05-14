@@ -13,7 +13,7 @@
 #define BLUE(COLORCODE)	((int) ( COLORCODE >> 8 ) & 0xFF )
 #define GREEN(COLORCODE)	((int) ( COLORCODE >> 16 ) & 0xFF )
 #define ALPHA(COLORCODE)	((int) COLORCODE & 0xFF )
-#define COLORCODE(r,g,b,a)((DWORD)((((r)&0xff)<<24)|(((g)&0xff)<<16)|(((b)&0xff)<<8)|((a)&0xff)))
+#define COLORCODE(r,g,b,a)((unsigned int)((((r)&0xff)<<24)|(((g)&0xff)<<16)|(((b)&0xff)<<8)|((a)&0xff)))
 
 namespace draw
 {
@@ -62,10 +62,16 @@ namespace draw
         g_surface->DrawPrintText( szString, wcslen( szString ) );
     }
 
-    void drawRect( int x, int y, int w, int h, unsigned int dwColor )
+    void OutlineRect( int x, int y, int w, int h, unsigned int dwColor )
     {
         g_surface->DrawSetColor( RED(dwColor), GREEN(dwColor), BLUE(dwColor), ALPHA(dwColor) );
         g_surface->DrawOutlinedRect( x, y, x + w, y + h );
+    }
+
+    void DrawRect( int x, int y, int w, int h, unsigned int dwColor )
+    {
+        g_surface->DrawSetColor( RED(dwColor), GREEN(dwColor), BLUE(dwColor), ALPHA(dwColor) );
+        g_surface->DrawFilledRect( x, y, x + w, y + h );
     }
 
     bool WorldToScreen( Vector &vOrigin, Vector &vScreen )
@@ -101,6 +107,23 @@ namespace draw
 
         swprintf( szString, 1024, L"%s", szBuffer );
         g_surface->GetTextSize(m_Font, szString, wide, tall);
+    }
+
+    void DrawBox( Vector vOrigin, int r, int g, int b, int alpha, int box_width, int radius )
+    {
+        Vector vScreen;
+
+        if( !WorldToScreen( vOrigin, vScreen ) )
+            return;
+
+        int radius2 = radius<<1;
+
+        OutlineRect( vScreen.x - radius + box_width, vScreen.y - radius + box_width, radius2 - box_width, radius2 - box_width, 0x000000FF );
+        OutlineRect( vScreen.x - radius - 1, vScreen.y - radius - 1, radius2 + ( box_width + 2 ), radius2 + ( box_width + 2 ), 0x000000FF );
+        DrawRect( vScreen.x - radius + box_width, vScreen.y - radius, radius2 - box_width, box_width,COLORCODE( r, g, b, alpha ));
+        DrawRect( vScreen.x - radius, vScreen.y + radius, radius2, box_width,COLORCODE( r, g, b, alpha ));
+        DrawRect( vScreen.x - radius, vScreen.y - radius, box_width, radius2,COLORCODE( r, g, b, alpha ));
+        DrawRect( vScreen.x + radius, vScreen.y - radius, box_width, radius2 + box_width, COLORCODE( r, g, b, alpha ) );
     }
 }
 
