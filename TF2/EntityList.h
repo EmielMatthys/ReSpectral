@@ -21,6 +21,11 @@ public:
         typedef CBaseEntity* ( * OriginalFn )( void*, int );
         return getvfunc<OriginalFn>( this, 4 )( this, hEnt );
     }
+    int GetHighestEntityIndex()
+    {
+        typedef int ( * OriginalFn )( void* );
+        return getvfunc<OriginalFn>( this, 6 )( this );
+    }
 };
 
 #endif //RESPECTRAL_ENTITYLIST_H

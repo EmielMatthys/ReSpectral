@@ -14,10 +14,9 @@ add_library(RESPECTRAL SHARED
         TF2/ISurface.h
         hooks/Panel.h
         hexdump.h
-        DrawManager.h
+        DrawTools.h
         TF2/EngineClient.h TF2/EntityList.h TF2/CBaseEntity.h TF2/ClientClass.h TF2/RecvTable.h TF2/dt_recv2.h TF2/dt_common2.h
-        TF2/IInputSystem.h
-        )
+        TF2/IInputSystem.h TF2/Vector.h)
 
 target_link_directories(RESPECTRAL PUBLIC spdlog-1.8.2/build)
 target_include_directories(RESPECTRAL PUBLIC spdlog-1.8.2/include)

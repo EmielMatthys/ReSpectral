@@ -6,13 +6,23 @@
 #define RESPECTRAL_PANEL_H
 
 #include "../TF2/IPanel.h"
-#include "../DrawManager.h"
+#include "../DrawTools.h"
+
+enum keystate_t
+{
+    DOWN,
+    UP
+};
+
+static keystate_t insert_key_state = UP;
 
 namespace hooks
 {
     #define PANEL_PAINT_TRAVERSE 42
     typedef void* (*Fn_PaintTraverse)(IPanel* thisptr, unsigned int panelIndex, bool forceRepaint, bool allowForce);
     Fn_PaintTraverse original_PaintTraverse;
+
+    void drawPlayerPos(int i);
 
     void Panel_PaintTraverse(IPanel* thisptr, unsigned int panelIndex, bool forceRepaint, bool allowForce)
     {
@@ -32,10 +42,75 @@ namespace hooks
 
         if ( vguiMatSystemTopPanel == panelIndex ) //If we're on MatSystemTopPanel, call our drawing code.
         {
-            if (g_inputSystem->IsButtonDown(KEY_INSERT))
-                draw::drawString( 200, 200, 0xFFFFFFFF, "Welcome to RESPECTRAL");
-//            draw::drawRect(0, 0, 35, 35,0xFFFFFFFF);
+            if (g_inputSystem->IsButtonDown(KEY_HOME))
+            {
+                if (insert_key_state == UP)
+                {
+                    draw::enabled = !draw::enabled;
+                }
+                insert_key_state = DOWN;
+            } else
+            {
+                insert_key_state = UP;
+            }
 
+            if (draw::enabled)
+            {
+//                draw::drawString( 200, 200, 0xFFFFFFFF, "Welcome to RESPECTRAL");
+                for (int i = 0; i < 24; i++)
+                {
+
+                    drawPlayerPos(i);
+
+                }
+
+                CBaseEntity* pBaseLocalEnt = g_entityList->GetClientEntity(g_engineClient->GetLocalPlayer());  //Grab the local player's entity.
+
+                if (!pBaseLocalEnt ) //Always check for null pointers.
+                    return;
+
+                Vector vecWorld, vecScreen; //Setup the Vectors.
+
+                pBaseLocalEnt->GetWorldSpaceCenter(vecWorld); //Get the center of the player.
+
+                if ( draw::WorldToScreen(vecWorld, vecScreen) ) //If the player is visible.
+                {
+                    draw::drawString( vecScreen.x, vecScreen.y, 0xFFFFFFFF, "You" ); //Draw on the player.
+                }
+            }
+
+        }
+    }
+
+    void drawPlayerPos(int i)
+    {
+        auto entity = g_entityList->GetClientEntity(i);
+        if (!entity) return;
+        Vector screenPos, worldPos;
+        entity->GetWorldSpaceCenter(worldPos);
+
+        char name[64], posStr[256];
+        snprintf(name, 64, "%i", i);
+
+//                    draw::drawString( 200, 200 + i*12, 0xFFFFFFFF, name);
+        int textWidth, textHeight;
+        draw::GetTextSize(textWidth, textHeight, name);
+
+        snprintf(posStr, 256, "Pos: %f : %f", worldPos.x, worldPos.y);
+        draw::drawString(200 + textWidth + 10, 200 + i*12, 0xFFFFFFFF, posStr);
+
+        player_info_t *playerInfo;
+        g_engineClient->GetPlayerInfo(i, playerInfo);
+
+        if (!playerInfo)
+        {
+            spdlog::error("PLayerInfo was NULL");
+            return;
+        }
+
+        if (draw::WorldToScreen(worldPos, screenPos))
+        {
+            draw::drawString(static_cast<int>(screenPos.x), static_cast<int>(screenPos.y), 0xFFFFFFFF, playerInfo->name);
         }
     }
 }
