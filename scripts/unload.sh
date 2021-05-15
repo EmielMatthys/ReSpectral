@@ -14,7 +14,7 @@ if [ $inst -gt ${#arr[@]} ] || [ $inst == ${#arr[@]} ]; then
   exit
 fi
 
-if ![ -f "$2" ]; then
+if ! [ -f "$2" ]; then
   echo $2 file does not exist!
   exit
 fi

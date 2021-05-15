@@ -9,6 +9,7 @@
 #include "vtablehook.h"
 #include "hooks/Panel.h"
 #include "hexdump.h"
+#include "hooks/ClientMode.h"
 
 //std::shared_ptr<Injector> Injector::_instance = nullptr;
 
@@ -40,8 +41,8 @@ void Injector::inject()
     auto vstdlib_module = Module::grab("bin/libvstdlib.so");
     auto vgui2_module   = Module::grab("bin/vgui2.so");
     auto surface_module = Module::grab("bin/vguimatsurface.so");
-    auto engine_module = Module::grab("bin/engine.so");
-    auto input_module  = Module::grab("bin/inputsystem.so");
+    auto engine_module  = Module::grab("bin/engine.so");
+    auto input_module   = Module::grab("bin/inputsystem.so");
 
 
     auto interfaceregs_symb =  client_module->getSymbol("s_pInterfaceRegs");
@@ -62,12 +63,22 @@ void Injector::inject()
         g_entityList   = grabCriticalInterface<EntityList*>(client_module, "VClientEntityList003");
         g_inputSystem  = grabCriticalInterface<IInputSystem*>(input_module, "InputSystemVersion001");
 
+        auto clientVMT  = *(void***)g_clientdll;
+        auto clientMode = **(void***)((char*)clientVMT[10] + 1);
 
         // Hook panel
         hooks::original_PaintTraverse =
                 (hooks::Fn_PaintTraverse) vtablehook_hook(g_panels, (void *) hooks::Panel_PaintTraverse, PANEL_PAINT_TRAVERSE);
 
-        input_module->walkInterfaces();
+        if (!clientMode)
+        {
+            spdlog::error("ClientMode pointer was null!");
+        } else
+        {
+            hooks::original_ClientModeCreateMove =
+                    (hooks::Fn_CreateMove) vtablehook_hook(clientMode, (void*) hooks::ClientMode_CreateMove, CLIENTMODE_CREATEMOVE);
+        }
+
 
     }
 

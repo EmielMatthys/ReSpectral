@@ -23,6 +23,8 @@ namespace draw
     int screenWidth;
     int screenHeight;
 
+    int debugValue = 0;
+
     void init()
     {
         m_Font = g_surface->CreateFont( );

@@ -23,6 +23,7 @@ namespace hooks
     Fn_PaintTraverse original_PaintTraverse;
 
     void drawPlayerPos(int i);
+    static int maxwidth = 0;
 
     void Panel_PaintTraverse(IPanel* thisptr, unsigned int panelIndex, bool forceRepaint, bool allowForce)
     {
@@ -34,7 +35,6 @@ namespace hooks
             const char* szName = g_panels->GetName(panelIndex);
             if( szName[0] == 'M' && szName[3] == 'S' ) //Look for MatSystemTopPanel without using slow operations like strcmp or strstr.
             {
-                spdlog::debug("inside MatSystemTopPanel!");
                 vguiMatSystemTopPanel = panelIndex;
                 draw::init();
             }
@@ -57,10 +57,12 @@ namespace hooks
 
             if (draw::enabled)
             {
-                draw::OutlineRect(500, 500, 50, 50,  0xFFFFFFFF);
-                for (int i = 0; i < 24; i++)
+                char debugValue[32];
+                snprintf(debugValue,32,"debugValue: %i",draw::debugValue);
+                draw::drawString(500, 500,0xFFFFFFFF,debugValue);
+                for (int i = 1; i < 24; i++)
                 {
-
+                    maxwidth = 0;
                     drawPlayerPos(i);
 
                 }
@@ -86,32 +88,36 @@ namespace hooks
     void drawPlayerPos(int i)
     {
         auto entity = g_entityList->GetClientEntity(i);
-        if (!entity) return;
+        if (!entity || entity->IsDormant()) return;
         Vector screenPos, worldPos;
         entity->GetWorldSpaceCenter(worldPos);
 
-//        char name[64], posStr[256];
-//        snprintf(name, 64, "%i", i);
-//
-//        int textWidth, textHeight;
-//        draw::GetTextSize(textWidth, textHeight, name);
-//
-//        snprintf(posStr, 256, "Pos: %f : %f", worldPos.x, worldPos.y);
-//        draw::drawString(200 + textWidth + 10, 200 + i*12, 0xFFFFFFFF, posStr);
-//
-//        player_info_t *playerInfo;
-//        g_engineClient->GetPlayerInfo(i, playerInfo);
-//
-//        if (!playerInfo)
-//        {
-//            spdlog::error("PLayerInfo was NULL");
-//            return;
-//        }
-//
+        player_info_t *playerInfo;
+        g_engineClient->GetPlayerInfo(i, playerInfo);
+
+        if (!playerInfo)
+        {
+            spdlog::error("PLayerInfo was NULL");
+            return;
+        }
+
+        const char *name = playerInfo->name;
+
+        char posStr[256];
+        snprintf(posStr, 256, "Pos: %f : %f", worldPos.x, worldPos.y);
+
+        int textWidth, textHeight;
+        draw::GetTextSize(textWidth, textHeight, name);
+        if (textWidth > maxwidth) maxwidth = textWidth;
+
+        draw::drawString(200 , 200 + i*12, 0xFFFFFFFF, name);
+        draw::drawString(200 + maxwidth + 10, 200 + i*12, 0xFFFFFFFF, posStr);
+
 //        if (draw::WorldToScreen(worldPos, screenPos))
 //        {
-//            draw::drawString(static_cast<int>(screenPos.x), static_cast<int>(screenPos.y), 0xFFFFFFFF, playerInfo->name);
+//            draw::drawString(static_cast<int>(screenPos.x - textWidth/2) , static_cast<int>(screenPos.y), 0xFFFFFFFF, name);
 //        }
+
     }
 }
 
