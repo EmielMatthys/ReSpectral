@@ -17,7 +17,9 @@
 
 namespace draw
 {
-    static unsigned long m_Font = -2000;
+    static unsigned long defaultFont = -2000;
+    static unsigned long titleFont = -2000;
+    static unsigned long currentFont = -2000;
     static bool enabled = false;
 
     int screenWidth;
@@ -27,9 +29,22 @@ namespace draw
 
     void init()
     {
-        m_Font = g_surface->CreateFont( );
+        defaultFont = g_surface->CreateFont( );
         g_engineClient->GetScreenSize(screenWidth, screenHeight);
-        g_surface->SetFontGlyphSet( m_Font, "Verdana", 16, 500, 0, 0, 0x200 );
+        g_surface->SetFontGlyphSet(defaultFont, "Verdana", 16, 500, 0, 0, 0x200 );
+
+        titleFont = g_surface->CreateFont( );
+        g_surface->SetFontGlyphSet(titleFont, "Verdana", 18, 500, 0, 0, 0x200 );
+    }
+
+    void DefaultFont()
+    {
+        currentFont = defaultFont;
+    }
+
+    void TitleFont()
+    {
+        currentFont = titleFont;
     }
 
     void drawString( int x, int y, unsigned int dwColor, const wchar_t *pszText)
@@ -38,7 +53,7 @@ namespace draw
             return;
 
         g_surface->DrawSetTextPos( x, y );
-        g_surface->DrawSetTextFont( m_Font );
+        g_surface->DrawSetTextFont(currentFont );
         g_surface->DrawSetTextColor( RED(dwColor), GREEN(dwColor), BLUE(dwColor), ALPHA(dwColor) );
         g_surface->DrawPrintText( pszText, wcslen( pszText ) );
     }
@@ -59,7 +74,7 @@ namespace draw
         swprintf( szString, 1024, L"%s", szBuffer );
 
         g_surface->DrawSetTextPos( x, y );
-        g_surface->DrawSetTextFont( m_Font );
+        g_surface->DrawSetTextFont(currentFont );
         g_surface->DrawSetTextColor( RED(dwColor), GREEN(dwColor), BLUE(dwColor), ALPHA(dwColor) );
         g_surface->DrawPrintText( szString, wcslen( szString ) );
     }
@@ -108,7 +123,7 @@ namespace draw
         va_end( va_alist );
 
         swprintf( szString, 1024, L"%s", szBuffer );
-        g_surface->GetTextSize(m_Font, szString, wide, tall);
+        g_surface->GetTextSize(currentFont, szString, wide, tall);
     }
 
     void DrawBox( Vector vOrigin, int r, int g, int b, int alpha, int box_width, int radius )

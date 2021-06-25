@@ -5,6 +5,7 @@
 #ifndef RESPECTRAL_PANEL_H
 #define RESPECTRAL_PANEL_H
 
+#include "shared.h"
 #include "../TF2/IPanel.h"
 #include "../DrawTools.h"
 
@@ -18,16 +19,12 @@ static keystate_t keystate = UP;
 
 namespace hooks
 {
-    #define PANEL_PAINT_TRAVERSE 42
-    typedef void* (*Fn_PaintTraverse)(IPanel* thisptr, unsigned int panelIndex, bool forceRepaint, bool allowForce);
-    Fn_PaintTraverse original_PaintTraverse;
-
     void drawPlayerPos(int i);
     static int maxwidth = 0;
 
-    void Panel_PaintTraverse(IPanel* thisptr, unsigned int panelIndex, bool forceRepaint, bool allowForce)
+    DECLARE_HOOK(42, void, Panel_PaintTraverse, (IPanel* thisptr, unsigned int panelIndex, bool forceRepaint, bool allowForce))
     {
-        original_PaintTraverse(thisptr, panelIndex, forceRepaint, allowForce);
+        original_Panel_PaintTraverse(thisptr, panelIndex, forceRepaint, allowForce);
         static unsigned int vguiMatSystemTopPanel;
 
         if (!vguiMatSystemTopPanel)
@@ -57,14 +54,17 @@ namespace hooks
 
             if (draw::enabled)
             {
-                char debugValue[32];
-                snprintf(debugValue,32,"debugValue: %i",draw::debugValue);
-                draw::drawString(500, 500,0xFFFFFFFF,debugValue);
+//                draw::OutlineRect(200-50, 200-50, 200, 600, 0xFFFFFFFF);
+
+                draw::TitleFont();
+                draw::drawString(200 , 200, 0xFFFFFFFF, "Player");
+                draw::drawString(200 + 100, 200 , 0xFFFFFFFF, "Cheat score");
+                draw::DefaultFont();
+
+                maxwidth = 0;
                 for (int i = 1; i < 24; i++)
                 {
-                    maxwidth = 0;
                     drawPlayerPos(i);
-
                 }
 
                 CBaseEntity* pBaseLocalEnt = g_entityList->GetClientEntity(g_engineClient->GetLocalPlayer());  //Grab the local player's entity.
@@ -78,7 +78,7 @@ namespace hooks
 
                 if ( draw::WorldToScreen(vecWorld, vecScreen) ) //If the player is visible.
                 {
-                    draw::drawString( vecScreen.x, vecScreen.y, 0xFFFFFFFF, "You" ); //Draw on the player.
+                    draw::drawString( vecScreen.x, vecScreen.y, COLORCODE(0,0xFF,0,0xFF), "You" ); //Draw on the player.
                 }
             }
 
@@ -87,31 +87,34 @@ namespace hooks
 
     void drawPlayerPos(int i)
     {
+//        char debugValue[256];
+//        snprintf(debugValue,256,"debugValue: %i",draw::debugValue);
+
         auto entity = g_entityList->GetClientEntity(i);
         if (!entity || entity->IsDormant()) return;
         Vector screenPos, worldPos;
         entity->GetWorldSpaceCenter(worldPos);
 
-        player_info_t *playerInfo;
-        g_engineClient->GetPlayerInfo(i, playerInfo);
+//        player_info_t *playerInfo;
+//        g_engineClient->GetPlayerInfo(i, playerInfo);
+//
+//        if (!playerInfo)
+//        {
+//            spdlog::error("PlayerInfo was NULL");
+//            return;
+//        }
+//
+//        const char *name = playerInfo->name;
 
-        if (!playerInfo)
-        {
-            spdlog::error("PLayerInfo was NULL");
-            return;
-        }
+//        char posStr[256];
+//        snprintf(posStr, 256, "Pos: %f : %f", worldPos.x, worldPos.y);
 
-        const char *name = playerInfo->name;
+//        int textWidth, textHeight;
+//        draw::GetTextSize(textWidth, textHeight, name);
+//        if (textWidth > maxwidth) maxwidth = textWidth;
 
-        char posStr[256];
-        snprintf(posStr, 256, "Pos: %f : %f", worldPos.x, worldPos.y);
-
-        int textWidth, textHeight;
-        draw::GetTextSize(textWidth, textHeight, name);
-        if (textWidth > maxwidth) maxwidth = textWidth;
-
-        draw::drawString(200 , 200 + i*12, 0xFFFFFFFF, name);
-        draw::drawString(200 + maxwidth + 10, 200 + i*12, 0xFFFFFFFF, posStr);
+//        draw::drawString(200 , 200 + 10 + i*12, 0xFFFFFFFF, name);
+//        draw::drawString(200 + maxwidth + 10, 200 + i*12, COLORCODE(0,0xFF,0,0xFF), "0");
 
 //        if (draw::WorldToScreen(worldPos, screenPos))
 //        {

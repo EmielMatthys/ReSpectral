@@ -1,7 +1,7 @@
 //
 // Created by emiel on 6/03/21.
 //
-
+//
 #include "Injector.h"
 #include "Module.h"
 #include <iostream>
@@ -10,6 +10,7 @@
 #include "hooks/Panel.h"
 #include "hexdump.h"
 #include "hooks/ClientMode.h"
+#include "hooks/shared.h"
 
 //std::shared_ptr<Injector> Injector::_instance = nullptr;
 
@@ -67,16 +68,15 @@ void Injector::inject()
         auto clientMode = **(void***)((char*)clientVMT[10] + 1);
 
         // Hook panel
-        hooks::original_PaintTraverse =
-                (hooks::Fn_PaintTraverse) vtablehook_hook(g_panels, (void *) hooks::Panel_PaintTraverse, PANEL_PAINT_TRAVERSE);
+        INSTANTIATE_HOOK(g_panels, Panel_PaintTraverse);
 
         if (!clientMode)
         {
             spdlog::error("ClientMode pointer was null!");
         } else
         {
-            hooks::original_ClientModeCreateMove =
-                    (hooks::Fn_CreateMove) vtablehook_hook(clientMode, (void*) hooks::ClientMode_CreateMove, CLIENTMODE_CREATEMOVE);
+            // Hook createmove
+            INSTANTIATE_HOOK(clientMode, ClientMode_CreateMove);
         }
 
 

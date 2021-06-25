@@ -21,6 +21,6 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen)
     return real_connect(sockfd, addr, addrlen);
 }
 
-__attribute__((destructor)) static void _exit() { printf("EXIT"); }
+__attribute__((destructor)) static void _exit() { printf("EXIT\n"); }
 
 
