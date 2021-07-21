@@ -8,10 +8,11 @@
 #include <map>
 #include <unordered_map>
 #include <memory>
+#include <tier1/interface.h>
 
 typedef void *(*CreateInterfaceFn)(const char *, int *);
 
-class InterfaceReg;
+//class InterfaceReg;
 
 /**
  * Represents a module loaded in TF2
@@ -40,13 +41,13 @@ public:
 
 };
 
-typedef void* (*CreateFnFn)();
-class InterfaceReg {
-public:
-    CreateFnFn _createFn;
-    char *_name;
-    InterfaceReg *_next;
-};
+//typedef void* (*CreateFnFn)();
+//class InterfaceReg {
+//public:
+//    CreateFnFn _createFn;
+//    char *_name;
+//    InterfaceReg *_next;
+//};
 
 
 #endif //RESPECTRAL_MODULE_H

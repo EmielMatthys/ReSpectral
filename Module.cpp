@@ -3,7 +3,7 @@
 //
 
 #include "Module.h"
-#include "spdlog/spdlog.h"
+//#include "spdlog/spdlog.h"
 #include <dlfcn.h>
 #include <functional>
 
@@ -16,7 +16,7 @@ Module::Module(const char *filename) : _filename(filename)
     {
         char message[128];
         snprintf(message, sizeof(message), "module '%s' could not be opened!", filename);
-        spdlog::error(message);
+//        spdlog::error(message);
     }
     CreateInterface = reinterpret_cast<CreateInterfaceFn>(getSymbol("CreateInterface"));
 }
@@ -28,7 +28,7 @@ void *Module::getSymbol(const char *symbolName) const
     {
         char message[128];
         snprintf(message, sizeof(message), "symbol '%s' of module '%s' could not be found!", symbolName, _filename);
-        spdlog::warn(message);
+//        spdlog::warn(message);
     }
     return result;
 }
@@ -73,7 +73,7 @@ std::shared_ptr<Module> Module::grab(const char* filename)
 
 void Module::walkInterfaces() const
 {
-    for (InterfaceReg* current = getInterfaces(); current; current = current->_next) {
-        spdlog::debug("{} => {}", current->_name, current->_createFn());
+    for (InterfaceReg* current = getInterfaces(); current; current = current->m_pNext) {
+//        spdlog::debug("{} => {}", current->m_pName, current->m_CreateFn());
     }
 }

@@ -5,9 +5,10 @@
 #ifndef RESPECTRAL_PANEL_H
 #define RESPECTRAL_PANEL_H
 
+#include <icliententity.h>
 #include "shared.h"
-#include "../TF2/IPanel.h"
 #include "../DrawTools.h"
+//#include "vgui/IPanel.h"
 
 enum keystate_t
 {
@@ -22,7 +23,7 @@ namespace hooks
     void drawPlayerPos(int i);
     static int maxwidth = 0;
 
-    DECLARE_HOOK(42, void, Panel_PaintTraverse, (IPanel* thisptr, unsigned int panelIndex, bool forceRepaint, bool allowForce))
+    DECLARE_HOOK(42, void, Panel_PaintTraverse, (vgui::IPanel* thisptr, unsigned int panelIndex, bool forceRepaint, bool allowForce))
     {
         original_Panel_PaintTraverse(thisptr, panelIndex, forceRepaint, allowForce);
         static unsigned int vguiMatSystemTopPanel;
@@ -67,14 +68,17 @@ namespace hooks
                     drawPlayerPos(i);
                 }
 
-                CBaseEntity* pBaseLocalEnt = g_entityList->GetClientEntity(g_engineClient->GetLocalPlayer());  //Grab the local player's entity.
+                IClientEntity* pBaseLocalEnt = g_entityList->GetClientEntity(g_engineClient->GetLocalPlayer()); //Grab the local player's entity.
 
-                if (!pBaseLocalEnt ) //Always check for null pointers.
+                if (!pBaseLocalEnt ) //Always check for struct_null pointers.
                     return;
 
                 Vector vecWorld, vecScreen; //Setup the Vectors.
 
-                pBaseLocalEnt->GetWorldSpaceCenter(vecWorld); //Get the center of the player.
+                Vector vMin, vMax;
+                pBaseLocalEnt->GetRenderBounds( vMin, vMax );
+                vecWorld = pBaseLocalEnt->GetAbsOrigin();
+                vecWorld.z += (vMin.z + vMax.z) / 2;
 
                 if ( draw::WorldToScreen(vecWorld, vecScreen) ) //If the player is visible.
                 {
@@ -93,7 +97,11 @@ namespace hooks
         auto entity = g_entityList->GetClientEntity(i);
         if (!entity || entity->IsDormant()) return;
         Vector screenPos, worldPos;
-        entity->GetWorldSpaceCenter(worldPos);
+
+        Vector vMin, vMax;
+        entity->GetRenderBounds( vMin, vMax );
+        worldPos = entity->GetAbsOrigin();
+        worldPos.z += (vMin.z + vMax.z) / 2;
 
 //        player_info_t *playerInfo;
 //        g_engineClient->GetPlayerInfo(i, playerInfo);

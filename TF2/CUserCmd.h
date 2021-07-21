@@ -5,7 +5,6 @@
 #ifndef RESPECTRAL_CUSERCMD_H
 #define RESPECTRAL_CUSERCMD_H
 
-#include "Vector.h"
 
 #define	FL_ONGROUND				(1<<0)	// At rest / on the ground
 #define FL_DUCKING				(1<<1)	// Player flag -- Player is fully crouched

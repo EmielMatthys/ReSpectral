@@ -8,6 +8,7 @@
 #include "Injector.h"
 #include <stdarg.h>
 #include <stdio.h>
+#include <mathlib/vmatrix.h>
 
 #define RED(COLORCODE)	((int) ( COLORCODE >> 24) )
 #define BLUE(COLORCODE)	((int) ( COLORCODE >> 8 ) & 0xFF )
@@ -93,7 +94,7 @@ namespace draw
 
     bool WorldToScreen( Vector &vOrigin, Vector &vScreen )
     {
-        const matrix3x4& worldToScreen = g_engineClient->WorldToScreenMatrix(); //Grab the world to screen matrix from CEngineClient::WorldToScreenMatrix
+        auto & worldToScreen = g_engineClient->WorldToScreenMatrix(); //Grab the world to screen matrix from CEngineClient::WorldToScreenMatrix
 
         float w = worldToScreen[3][0] * vOrigin[0] + worldToScreen[3][1] * vOrigin[1] + worldToScreen[3][2] * vOrigin[2] + worldToScreen[3][3]; //Calculate the angle in compareson to the player's camera.
         vScreen.z = 0; //Screen doesn't have a 3rd dimension.

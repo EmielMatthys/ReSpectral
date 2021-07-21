@@ -5,7 +5,7 @@
 #include "Injector.h"
 #include "Module.h"
 #include <iostream>
-#include "spdlog/spdlog.h"
+//#include "spdlog/spdlog.h"
 #include "vtablehook.h"
 #include "hooks/Panel.h"
 #include "hexdump.h"
@@ -27,7 +27,7 @@ T grabCriticalInterface(const std::shared_ptr<Module>& module, const char *name)
     auto interface = module->CreateInterface(name, nullptr);
     if (!interface)
     {
-        spdlog::error("interface %s not found!");
+//        spdlog::error("interface %s not found!");
         exit(1);
     }
     return static_cast<T>(interface);
@@ -35,8 +35,8 @@ T grabCriticalInterface(const std::shared_ptr<Module>& module, const char *name)
 
 void Injector::inject()
 {
-    spdlog::set_level(spdlog::level::debug);
-    spdlog::info("Loading injector!");
+//    spdlog::set_level(spdlog::level::debug);
+//    spdlog::info("Loading injector!");
 
     auto client_module  = Module::grab("tf/bin/client.so");
     auto vstdlib_module = Module::grab("bin/libvstdlib.so");
@@ -51,17 +51,17 @@ void Injector::inject()
     if (interfaceregs_symb)
     {
         client_module->close();
-        spdlog::debug("s_pInterfaceRegs found! Using this instead of CreateInterface.");
+//        spdlog::debug("s_pInterfaceRegs found! Using this instead of CreateInterface.");
     }
     else
     {
 
         g_clientdll = grabCriticalInterface<void*>(client_module, "VClient017");
-        g_panels    = grabCriticalInterface<IPanel*>(vgui2_module, "VGUI_Panel009");
+        g_panels    = grabCriticalInterface<vgui::IPanel*>(vgui2_module, "VGUI_Panel009");
         g_cvar      = grabCriticalInterface<void*>(vstdlib_module, "VEngineCvar004");
-        g_surface   = grabCriticalInterface<ISurface*>(surface_module, "VGUI_Surface030");
-        g_engineClient = grabCriticalInterface<EngineClient*>(engine_module, "VEngineClient014");
-        g_entityList   = grabCriticalInterface<EntityList*>(client_module, "VClientEntityList003");
+        g_surface   = grabCriticalInterface<vgui::ISurface*>(surface_module, "VGUI_Surface030");
+        g_engineClient = grabCriticalInterface<IVEngineClient*>(engine_module, "VEngineClient014");
+        g_entityList   = grabCriticalInterface<IClientEntityList*>(client_module, "VClientEntityList003");
         g_inputSystem  = grabCriticalInterface<IInputSystem*>(input_module, "InputSystemVersion001");
 
         auto clientVMT  = *(void***)g_clientdll;
@@ -72,7 +72,7 @@ void Injector::inject()
 
         if (!clientMode)
         {
-            spdlog::error("ClientMode pointer was null!");
+//            spdlog::error("ClientMode pointer was struct_null!");
         } else
         {
             // Hook createmove
@@ -82,7 +82,7 @@ void Injector::inject()
 
     }
 
-    spdlog::info("Loaded successfully");
+//    spdlog::info("Loaded successfully");
 
 
 }

@@ -1,0 +1,3 @@
+[submodule "sdk-headers/source-sdk-2013-headers"]
+	path = sdk-headers/source-sdk-2013-headers
+	url = https://github.com/nullworks/source-sdk-2013-headers
