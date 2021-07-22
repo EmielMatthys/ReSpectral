@@ -6,18 +6,13 @@
 #define RESPECTRAL_INJECTOR_H
 
 #include <memory>
-//#include "TF2/IPanel.h"
-//#include "TF2/ISurface.h"
-//#include "TF2/EngineClient.h"
-//#include "TF2/EntityList.h"
-//#include "TF2/IInputSystem.h"
 #include "vgui/IPanel.h"
 #include "vgui/ISurface.h"
 #include "cdll_int.h"
 #include "icliententitylist.h"
 #include "inputsystem/iinputsystem.h"
 
-static void *g_clientdll   = nullptr;
+static IBaseClientDLL *g_clientdll   = nullptr;
 static void *g_cvar        = nullptr;
 static vgui::IPanel *g_panels    = nullptr;
 static vgui::ISurface *g_surface = nullptr;

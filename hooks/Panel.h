@@ -117,17 +117,17 @@ namespace hooks
 //        char posStr[256];
 //        snprintf(posStr, 256, "Pos: %f : %f", worldPos.x, worldPos.y);
 
-//        int textWidth, textHeight;
-//        draw::GetTextSize(textWidth, textHeight, name);
-//        if (textWidth > maxwidth) maxwidth = textWidth;
+        int textWidth, textHeight;
+        draw::GetTextSize(textWidth, textHeight, "X");
+        if (textWidth > maxwidth) maxwidth = textWidth;
 
 //        draw::drawString(200 , 200 + 10 + i*12, 0xFFFFFFFF, name);
         draw::drawString(200 + maxwidth + 10, 200 + i*12, COLORCODE(0,0xFF,0,0xFF), "0");
 
-//        if (draw::WorldToScreen(worldPos, screenPos))
-//        {
-//            draw::drawString(static_cast<int>(screenPos.x - textWidth/2) , static_cast<int>(screenPos.y), 0xFFFFFFFF, name);
-//        }
+        if (draw::WorldToScreen(worldPos, screenPos))
+        {
+            draw::drawString(static_cast<int>(screenPos.x - textWidth/2) , static_cast<int>(screenPos.y), 0xFFFFFFFF, "X");
+        }
 
     }
 }

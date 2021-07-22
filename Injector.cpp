@@ -52,7 +52,7 @@ void Injector::inject()
     else
     {
 
-        g_clientdll = grabCriticalInterface<void*>(client_module, "VClient017");
+        g_clientdll = grabCriticalInterface<IBaseClientDLL*>(client_module, "VClient017");
         g_panels    = grabCriticalInterface<vgui::IPanel*>(vgui2_module, "VGUI_Panel009");
         g_cvar      = grabCriticalInterface<void*>(vstdlib_module, "VEngineCvar004");
         g_surface   = grabCriticalInterface<vgui::ISurface*>(surface_module, "VGUI_Surface030");
