@@ -5,14 +5,11 @@
 #include "Injector.h"
 #include "Module.h"
 #include <iostream>
-//#include "spdlog/spdlog.h"
 #include "vtablehook.h"
 #include "hooks/Panel.h"
 #include "hexdump.h"
 #include "hooks/ClientMode.h"
 #include "hooks/shared.h"
-
-//std::shared_ptr<Injector> Injector::_instance = nullptr;
 
 /**
  * Grabs interface pointer with given name from given module and exits the process if not found.
@@ -27,7 +24,7 @@ T grabCriticalInterface(const std::shared_ptr<Module>& module, const char *name)
     auto interface = module->CreateInterface(name, nullptr);
     if (!interface)
     {
-//        spdlog::error("interface %s not found!");
+        printf("interface %s not found!\n", name);
         exit(1);
     }
     return static_cast<T>(interface);
@@ -35,8 +32,7 @@ T grabCriticalInterface(const std::shared_ptr<Module>& module, const char *name)
 
 void Injector::inject()
 {
-//    spdlog::set_level(spdlog::level::debug);
-//    spdlog::info("Loading injector!");
+    printf("Loading injector!\n");
 
     auto client_module  = Module::grab("tf/bin/client.so");
     auto vstdlib_module = Module::grab("bin/libvstdlib.so");
@@ -51,7 +47,7 @@ void Injector::inject()
     if (interfaceregs_symb)
     {
         client_module->close();
-//        spdlog::debug("s_pInterfaceRegs found! Using this instead of CreateInterface.");
+        printf("s_pInterfaceRegs found! Using this instead of CreateInterface.\n");
     }
     else
     {
@@ -72,7 +68,7 @@ void Injector::inject()
 
         if (!clientMode)
         {
-//            spdlog::error("ClientMode pointer was struct_null!");
+            printf("ClientMode pointer was struct_null!\n");
         } else
         {
             // Hook createmove
@@ -82,13 +78,7 @@ void Injector::inject()
 
     }
 
-//    spdlog::info("Loaded successfully");
+    printf("Loaded successfully\n");
 
 
 }
-
-//std::shared_ptr<Injector> Injector::instance()
-//{
-//    if (_instance == nullptr) _instance = std::make_shared<Injector>();
-//    return _instance;
-//}
