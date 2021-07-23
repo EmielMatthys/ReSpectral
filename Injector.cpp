@@ -11,6 +11,14 @@
 #include "hooks/ClientMode.h"
 #include "hooks/shared.h"
 
+IBaseClientDLL *g_clientdll   = nullptr;
+void *g_cvar                  = nullptr;
+vgui::IPanel *g_panels        = nullptr;
+vgui::ISurface *g_surface     = nullptr;
+IVEngineClient *g_engineClient  = nullptr;
+IClientEntityList *g_entityList = nullptr;
+IInputSystem *g_inputSystem     = nullptr;
+
 /**
  * Grabs interface pointer with given name from given module and exits the process if not found.
  * @param module
@@ -62,6 +70,13 @@ void Injector::inject()
 
         auto clientVMT  = *(void***)g_clientdll;
         auto clientMode = **(void***)((char*)clientVMT[10] + 1);
+
+        printf("clientdll: %p\n", (void *) g_clientdll);
+//        client_module->walkInterfaces();
+        const auto *client_class = g_clientdll->GetAllClasses();
+        printf("client_class: %p\n", (void *) client_class);
+        gNetvars.init();
+        netvar.Init();
 
         // Hook panel
         INSTANTIATE_HOOK(g_panels, Panel_PaintTraverse);

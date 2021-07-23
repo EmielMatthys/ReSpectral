@@ -8,6 +8,7 @@
 #include <icliententity.h>
 #include "shared.h"
 #include "../DrawTools.h"
+#include "../netvars.h"
 //#include "vgui/IPanel.h"
 
 enum keystate_t
@@ -80,9 +81,13 @@ namespace hooks
                 vecWorld = pBaseLocalEnt->GetAbsOrigin();
                 vecWorld.z += (vMin.z + vMax.z) / 2;
 
+                int health = NET_INT(pBaseLocalEnt, netvar.iHealth);
+                char healthstr[256];
+                sprintf(healthstr, "%i", health);
+
                 if ( draw::WorldToScreen(vecWorld, vecScreen) ) //If the player is visible.
                 {
-                    draw::drawString( vecScreen.x, vecScreen.y, COLORCODE(0,0xFF,0,0xFF), "You" ); //Draw on the player.
+                    draw::drawString( vecScreen.x, vecScreen.y, COLORCODE(0,0xFF,0,0xFF), healthstr ); //Draw on the player.
                 }
             }
 
@@ -96,6 +101,9 @@ namespace hooks
 
         auto entity = g_entityList->GetClientEntity(i);
         if (!entity || entity->IsDormant()) return;
+        int health = NET_INT(entity, netvar.iHealth);
+        char healthstr[256];
+        sprintf(healthstr, "%i", health);
         Vector screenPos, worldPos;
 
         Vector vMin, vMax;
@@ -122,11 +130,11 @@ namespace hooks
         if (textWidth > maxwidth) maxwidth = textWidth;
 
 //        draw::drawString(200 , 200 + 10 + i*12, 0xFFFFFFFF, name);
-        draw::drawString(200 + maxwidth + 10, 200 + i*12, COLORCODE(0,0xFF,0,0xFF), "0");
+        draw::drawString(200 + maxwidth + 10, 200 + i*12, COLORCODE(0,0xFF,0,0xFF), healthstr);
 
         if (draw::WorldToScreen(worldPos, screenPos))
         {
-            draw::drawString(static_cast<int>(screenPos.x - textWidth/2) , static_cast<int>(screenPos.y), 0xFFFFFFFF, "X");
+            draw::drawString(static_cast<int>(screenPos.x - textWidth/2) , static_cast<int>(screenPos.y), 0xFFFFFFFF, healthstr);
         }
 
     }

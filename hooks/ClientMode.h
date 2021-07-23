@@ -7,23 +7,21 @@
 
 #include "shared.h"
 #include "../TF2/CUserCmd.h"
-
+#include "../NetVar.h"
 
 
 namespace hooks
 {
-//    #define CLIENTMODE_CREATEMOVE 21
-//    typedef bool (*Fn_CreateMove)(void* thisptr, float flInputSampleTime, CUserCmd* cmd);
-//    Fn_CreateMove original_ClientModeCreateMove;
-//
-//    static int it;
-//    bool ClientMode_CreateMove(void* thisptr, float flInputSampleTime, CUserCmd* cmd)
-//    {
-//        return original_ClientModeCreateMove(thisptr, flInputSampleTime, cmd);
-//    }
+    static bool initialized = false;
 
     DECLARE_HOOK(21, bool, ClientMode_CreateMove,(void* thisptr,float flInputSampleTime, CUserCmd* cmd))
     {
+        if (!initialized)
+        {
+//            gNetvars.init();
+//            InitNetVars();
+            initialized = true;
+        }
         return original_ClientMode_CreateMove(thisptr, flInputSampleTime, cmd);
     }
 }

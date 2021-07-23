@@ -73,6 +73,6 @@ std::shared_ptr<Module> Module::grab(const char* filename)
 void Module::walkInterfaces() const
 {
     for (InterfaceReg* current = getInterfaces(); current; current = current->m_pNext) {
-        printf("%s => 0x%p\n", current->m_pName, (void *) current->m_CreateFn());
+        printf("\033[0;36m%s => 0x%p\n\033[0m", current->m_pName, (void *) current->m_CreateFn());
     }
 }

@@ -12,13 +12,13 @@
 #include "icliententitylist.h"
 #include "inputsystem/iinputsystem.h"
 
-static IBaseClientDLL *g_clientdll   = nullptr;
-static void *g_cvar        = nullptr;
-static vgui::IPanel *g_panels    = nullptr;
-static vgui::ISurface *g_surface = nullptr;
-static IVEngineClient *g_engineClient = nullptr;
-static IClientEntityList *g_entityList     = nullptr;
-static IInputSystem *g_inputSystem  = nullptr;
+extern IBaseClientDLL *g_clientdll;
+extern void *g_cvar;
+extern vgui::IPanel *g_panels;
+extern vgui::ISurface *g_surface;
+extern IVEngineClient *g_engineClient;
+extern IClientEntityList *g_entityList;
+extern IInputSystem *g_inputSystem;
 
 class Injector {
 public:

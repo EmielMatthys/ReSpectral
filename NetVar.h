@@ -8,6 +8,7 @@
 #include <unordered_map>
 #include <string.h>
 #include <memory>
+#include <cdll_int.h>
 
 // this and the cpp are creds to "Altimor"
 
