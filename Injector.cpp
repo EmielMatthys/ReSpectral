@@ -10,6 +10,7 @@
 #include "hexdump.h"
 #include "hooks/ClientMode.h"
 #include "hooks/shared.h"
+#include "hooks/IVModelRender.h"
 
 IBaseClientDLL *g_clientdll   = nullptr;
 void *g_cvar                  = nullptr;
@@ -18,6 +19,10 @@ vgui::ISurface *g_surface     = nullptr;
 IVEngineClient *g_engineClient  = nullptr;
 IClientEntityList *g_entityList = nullptr;
 IInputSystem *g_inputSystem     = nullptr;
+IVRenderView *g_renderView = nullptr;
+IVModelRender *g_modelRender = nullptr;
+IMaterialSystem *g_materialSystem = nullptr;
+
 
 /**
  * Grabs interface pointer with given name from given module and exits the process if not found.
@@ -48,6 +53,7 @@ void Injector::inject()
     auto surface_module = Module::grab("bin/vguimatsurface.so");
     auto engine_module  = Module::grab("bin/engine.so");
     auto input_module   = Module::grab("bin/inputsystem.so");
+    auto mat_sys        = Module::grab("bin/materialsystem.so");
 
 
     auto interfaceregs_symb =  client_module->getSymbol("s_pInterfaceRegs");
@@ -67,14 +73,15 @@ void Injector::inject()
         g_engineClient = grabCriticalInterface<IVEngineClient*>(engine_module, "VEngineClient014");
         g_entityList   = grabCriticalInterface<IClientEntityList*>(client_module, "VClientEntityList003");
         g_inputSystem  = grabCriticalInterface<IInputSystem*>(input_module, "InputSystemVersion001");
+        g_modelRender  = grabCriticalInterface<IVModelRender*>(engine_module, "VEngineModel016");
+        g_modelInfo    = grabCriticalInterface<IVModelInfo*>(engine_module, "VModelInfoClient006");
+        g_materialSystem = grabCriticalInterface<IMaterialSystem*>(mat_sys, "VMaterialSystem081");
 
         auto clientVMT  = *(void***)g_clientdll;
         auto clientMode = **(void***)((char*)clientVMT[10] + 1);
 
-        printf("clientdll: %p\n", (void *) g_clientdll);
-//        client_module->walkInterfaces();
-        const auto *client_class = g_clientdll->GetAllClasses();
-        printf("client_class: %p\n", (void *) client_class);
+        engine_module->walkInterfaces();
+
         gNetvars.init();
         netvar.Init();
 
@@ -89,6 +96,8 @@ void Injector::inject()
             // Hook createmove
             INSTANTIATE_HOOK(clientMode, ClientMode_CreateMove);
         }
+
+        INSTANTIATE_HOOK(g_modelRender, DrawModelExecute);
 
 
     }

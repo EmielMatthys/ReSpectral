@@ -101,6 +101,9 @@ namespace hooks
 
         auto entity = g_entityList->GetClientEntity(i);
         if (!entity || entity->IsDormant()) return;
+        if (NET_BYTE(entity, netvar.iLifeState) != LIFE_ALIVE) return;
+        if (entity == g_entityList->GetClientEntity(g_engineClient->GetLocalPlayer())) return;
+        
         int health = NET_INT(entity, netvar.iHealth);
         char healthstr[256];
         sprintf(healthstr, "%i", health);

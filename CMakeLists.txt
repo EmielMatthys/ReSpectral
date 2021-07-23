@@ -13,7 +13,7 @@ add_library(RESPECTRAL SHARED
         hexdump.h
         DrawTools.h
         TF2/CUserCmd.h
-        netvars.h netvars.cpp NetVar.cpp NetVar.h ClientClass.h)
+        netvars.h netvars.cpp NetVar.cpp NetVar.h ClientClass.h Chams.cpp hooks/IVModelRender.h)
 
 #target_link_directories(RESPECTRAL PUBLIC spdlog-1.8.2/build)
 #target_include_directories(RESPECTRAL PUBLIC spdlog-1.8.2/include)
