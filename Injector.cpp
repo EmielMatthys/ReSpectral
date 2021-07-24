@@ -21,6 +21,7 @@ IClientEntityList *g_entityList = nullptr;
 IInputSystem *g_inputSystem     = nullptr;
 IVRenderView *g_renderView = nullptr;
 IVModelRender *g_modelRender = nullptr;
+IVModelInfo *g_modelInfo = nullptr;
 IMaterialSystem *g_materialSystem = nullptr;
 
 
@@ -75,6 +76,7 @@ void Injector::inject()
         g_inputSystem  = grabCriticalInterface<IInputSystem*>(input_module, "InputSystemVersion001");
         g_modelRender  = grabCriticalInterface<IVModelRender*>(engine_module, "VEngineModel016");
         g_modelInfo    = grabCriticalInterface<IVModelInfo*>(engine_module, "VModelInfoClient006");
+        g_renderView   = grabCriticalInterface<IVRenderView*>(engine_module, "VEngineRenderView014");
         g_materialSystem = grabCriticalInterface<IMaterialSystem*>(mat_sys, "VMaterialSystem081");
 
         auto clientVMT  = *(void***)g_clientdll;
@@ -85,21 +87,9 @@ void Injector::inject()
         gNetvars.init();
         netvar.Init();
 
-        // Hook panel
         INSTANTIATE_HOOK(g_panels, Panel_PaintTraverse);
-
-        if (!clientMode)
-        {
-            printf("ClientMode pointer was struct_null!\n");
-        } else
-        {
-            // Hook createmove
-            INSTANTIATE_HOOK(clientMode, ClientMode_CreateMove);
-        }
-
+        INSTANTIATE_HOOK(clientMode, ClientMode_CreateMove);
         INSTANTIATE_HOOK(g_modelRender, DrawModelExecute);
-
-
     }
 
     printf("Loaded successfully\n");

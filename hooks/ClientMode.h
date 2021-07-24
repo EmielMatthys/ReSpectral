@@ -12,16 +12,9 @@
 
 namespace hooks
 {
-    static bool initialized = false;
 
     DECLARE_HOOK(21, bool, ClientMode_CreateMove,(void* thisptr,float flInputSampleTime, CUserCmd* cmd))
     {
-        if (!initialized)
-        {
-//            gNetvars.init();
-//            InitNetVars();
-            initialized = true;
-        }
         return original_ClientMode_CreateMove(thisptr, flInputSampleTime, cmd);
     }
 }
