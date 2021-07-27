@@ -18,6 +18,8 @@
 //// NON-PLAYER SPECIFIC (i.e., not used by GameMovement or the client .dll ) -- Can still be applied to players, though
 //#define	FL_INWATER				(1<<9)	// In water
 
+#include <mathlib/vector.h>
+
 #define IN_ATTACK (1 << 0)
 #define IN_JUMP (1 << 1)
 #define IN_DUCK (1 << 2)

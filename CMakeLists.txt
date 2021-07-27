@@ -9,11 +9,10 @@ add_library(RESPECTRAL SHARED
         Module.cpp Module.h ModuleManager.cpp ModuleManager.h
         vtablehook.h
         getvfunc.h
-        hooks/Panel.h
         hexdump.h
         DrawTools.h
         TF2/CUserCmd.h
-        netvars.h netvars.cpp NetVar.cpp NetVar.h ClientClass.h Chams.cpp hooks/IVModelRender.h)
+        netvars.h netvars.cpp NetVar.cpp NetVar.h ClientClass.h hooks/IVModelRender.h hooks/IVModelRender.cpp TF2/C_BaseEntity.h hooks/ISpatialQuery.cpp hooks/Hooks.h hooks/ClientMode.cpp hooks/Panel.cpp)
 
 #target_link_directories(RESPECTRAL PUBLIC spdlog-1.8.2/build)
 #target_include_directories(RESPECTRAL PUBLIC spdlog-1.8.2/include)

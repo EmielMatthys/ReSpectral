@@ -21,14 +21,13 @@ namespace draw
     static unsigned long defaultFont = -2000;
     static unsigned long titleFont = -2000;
     static unsigned long currentFont = -2000;
-    static bool enabled = false;
 
-    int screenWidth;
-    int screenHeight;
+    extern bool enabled;
 
-    int debugValue = 0;
+    extern int screenWidth;
+    extern int screenHeight;
 
-    void init()
+    inline void init()
     {
         defaultFont = g_surface->CreateFont( );
         g_engineClient->GetScreenSize(screenWidth, screenHeight);
@@ -38,17 +37,17 @@ namespace draw
         g_surface->SetFontGlyphSet(titleFont, "Verdana", 18, 500, 0, 0, 0x200 );
     }
 
-    void DefaultFont()
+    inline void DefaultFont()
     {
         currentFont = defaultFont;
     }
 
-    void TitleFont()
+    inline void TitleFont()
     {
         currentFont = titleFont;
     }
 
-    void drawString( int x, int y, unsigned int dwColor, const wchar_t *pszText)
+    inline void drawString( int x, int y, unsigned int dwColor, const wchar_t *pszText)
     {
         if( !pszText )
             return;
@@ -59,7 +58,7 @@ namespace draw
         g_surface->DrawPrintText( pszText, wcslen( pszText ) );
     }
 
-    void drawString( int x, int y, unsigned int dwColor, const char *pszText, ... )
+    inline void drawString( int x, int y, unsigned int dwColor, const char *pszText, ... )
     {
         if( pszText == NULL )
             return;
@@ -80,19 +79,19 @@ namespace draw
         g_surface->DrawPrintText( szString, wcslen( szString ) );
     }
 
-    void OutlineRect( int x, int y, int w, int h, unsigned int dwColor )
+    inline void OutlineRect( int x, int y, int w, int h, unsigned int dwColor )
     {
         g_surface->DrawSetColor( RED(dwColor), GREEN(dwColor), BLUE(dwColor), ALPHA(dwColor) );
         g_surface->DrawOutlinedRect( x, y, x + w, y + h );
     }
 
-    void DrawRect( int x, int y, int w, int h, unsigned int dwColor )
+    inline void DrawRect( int x, int y, int w, int h, unsigned int dwColor )
     {
         g_surface->DrawSetColor( RED(dwColor), GREEN(dwColor), BLUE(dwColor), ALPHA(dwColor) );
         g_surface->DrawFilledRect( x, y, x + w, y + h );
     }
 
-    bool WorldToScreen( Vector &vOrigin, Vector &vScreen )
+    inline bool WorldToScreen( Vector &vOrigin, Vector &vScreen )
     {
         auto & worldToScreen = g_engineClient->WorldToScreenMatrix(); //Grab the world to screen matrix from CEngineClient::WorldToScreenMatrix
 
@@ -110,7 +109,7 @@ namespace draw
         return false;
     }
 
-    void GetTextSize(int &wide, int &tall, const char *pszText, ...)
+    inline void GetTextSize(int &wide, int &tall, const char *pszText, ...)
     {
         if( pszText == NULL )
             return;
@@ -127,7 +126,7 @@ namespace draw
         g_surface->GetTextSize(currentFont, szString, wide, tall);
     }
 
-    void DrawBox( Vector vOrigin, int r, int g, int b, int alpha, int box_width, int radius )
+    inline void DrawBox( Vector vOrigin, int r, int g, int b, int alpha, int box_width, int radius )
     {
         Vector vScreen;
 

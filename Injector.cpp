@@ -6,11 +6,11 @@
 #include "Module.h"
 #include <iostream>
 #include "vtablehook.h"
-#include "hooks/Panel.h"
+#include "hooks/Hooks.h"
 #include "hexdump.h"
-#include "hooks/ClientMode.h"
-#include "hooks/shared.h"
-#include "hooks/IVModelRender.h"
+#include "NetVar.h"
+#include "netvars.h"
+#include "DrawTools.h"
 
 IBaseClientDLL *g_clientdll   = nullptr;
 void *g_cvar                  = nullptr;
@@ -24,6 +24,9 @@ IVModelRender *g_modelRender = nullptr;
 IVModelInfo *g_modelInfo = nullptr;
 IMaterialSystem *g_materialSystem = nullptr;
 
+bool draw::enabled = false;
+int draw::screenWidth = -1;
+int draw::screenHeight = -1;
 
 /**
  * Grabs interface pointer with given name from given module and exits the process if not found.
@@ -90,6 +93,7 @@ void Injector::inject()
         INSTANTIATE_HOOK(g_panels, Panel_PaintTraverse);
         INSTANTIATE_HOOK(clientMode, ClientMode_CreateMove);
         INSTANTIATE_HOOK(g_modelRender, DrawModelExecute);
+        INSTANTIATE_HOOK(g_engineClient->GetBSPTreeQuery(), ListLeavesInBox);
     }
 
     printf("Loaded successfully\n");
