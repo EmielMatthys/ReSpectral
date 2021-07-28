@@ -13,11 +13,6 @@ bool hooks::ClientMode_CreateMove(void *thisptr, float flInputSampleTime, CUserC
 {
     bool originalRet = original_ClientMode_CreateMove(thisptr, flInputSampleTime, cmd);
 
-    if (cmd->buttons & IN_JUMP) //To prove we have control over the CUserCmd, write the IN_ATTACK bit every time we jump.
-    {
-        cmd->buttons |= IN_ATTACK; //Set the IN_ATTACK flag.
-    }
-
     auto* local = (C_BaseEntity*) g_entityList->GetClientEntity(g_engineClient->GetLocalPlayer());
     auto myTeam = NET_INT(local, netvar.iTeamNum);
 
