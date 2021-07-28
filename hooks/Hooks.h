@@ -21,7 +21,7 @@ hooks::original_ ## funcname = \
 
 namespace hooks
 {
-    DECLARE_HOOK(21, bool, ClientMode_CreateMove,(void* thisptr,float flInputSampleTime, CUserCmd* cmd));
+    DECLARE_HOOK(22, bool, ClientMode_CreateMove,(void* thisptr, float flInputSampleTime, CUserCmd* cmd));
     DECLARE_HOOK(5, int, ListLeavesInBox, (void* thisptr, const Vector& mins, const Vector& maxs, unsigned short *pList, int listMax));
     DECLARE_HOOK(42, void, Panel_PaintTraverse, (vgui::IPanel* thisptr, unsigned int panelIndex, bool forceRepaint, bool allowForce));
     DECLARE_HOOK(19, void, DrawModelExecute, (IVModelRender* thisptr,  const DrawModelState_t &state, const ModelRenderInfo_t &pInfo, matrix3x4_t *pCustomBoneToWorld));
