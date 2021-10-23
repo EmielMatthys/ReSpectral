@@ -94,6 +94,8 @@ void Injector::inject()
         INSTANTIATE_HOOK(clientMode, ClientMode_CreateMove);
         INSTANTIATE_HOOK(g_modelRender, DrawModelExecute);
         INSTANTIATE_HOOK(g_engineClient->GetBSPTreeQuery(), ListLeavesInBox);
+
+        engine_module->findSignature("");
     }
 
     printf("Loaded successfully\n");

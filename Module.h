@@ -36,6 +36,7 @@ public:
     void walkInterfaces() const;
 
     InterfaceReg *getInterfaces() const;
+    uint64_t findSignature(const char* sig);
 
     CreateInterfaceFn CreateInterface;
 

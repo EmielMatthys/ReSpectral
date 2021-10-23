@@ -46,3 +46,24 @@ bool hooks::ClientMode_CreateMove(void *thisptr, float flInputSampleTime, CUserC
 
     return originalRet;
 }
+
+bool isBehindTarget(C_BaseEntity *pTarget, C_BaseEntity *pLocal)
+{
+    // Get the forward view vector of the target, ignore Z
+    Vector vecVictimForward = NET_VAR(pTarget, netvar.m_angEyeAngles, Vector);
+//    AngleVectors( pTarget->EyeAngles(), &vecVictimForward, NULL, NULL );
+    vecVictimForward.z = 0.0f;
+    vecVictimForward.NormalizeInPlace();
+
+    // Get a vector from my origin to my targets origin
+    Vector vecToTarget, vecLocal;
+    pTarget->GetWorldSpaceCenter(vecToTarget);
+    pLocal->GetWorldSpaceCenter(vecLocal);
+    vecToTarget = vecToTarget - vecLocal;
+    vecToTarget.z = 0.0f;
+    vecToTarget.NormalizeInPlace();
+
+    float flDot = DotProduct( vecVictimForward, vecToTarget );
+
+    return ( flDot > -0.1 );
+}

@@ -5,6 +5,10 @@
 #include "Module.h"
 #include <dlfcn.h>
 #include <functional>
+#include <string>
+#include <sstream>
+#include <vector>
+#include <iterator>
 
 std::map<unsigned int, std::shared_ptr<Module>> Module::_cache;
 
@@ -75,4 +79,59 @@ void Module::walkInterfaces() const
     for (InterfaceReg* current = getInterfaces(); current; current = current->m_pNext) {
         printf("\033[0;36m%s => 0x%p\n\033[0m", current->m_pName, (void *) current->m_CreateFn());
     }
+}
+
+uint64_t Module::findSignature(const char *sig)
+{
+    auto fp = fopen("/proc/self/maps", "r");
+    if (!fp) return -1;
+
+    unsigned int base = 0, end = 0;
+    char *line;
+    size_t line_size = 0;
+    while (getline(&line, &line_size, fp) > 0)
+    {
+        std::string sline(line);
+        if (sline.find(this->_filename) != std::string::npos && sline.find("r-xp") != std::string::npos)
+        {
+            printf("%s", line);
+            // use find for '-' and space
+            std::string base_addr(sline.substr(0,sline.find('-')));
+            std::string end_addr(sline.substr(0, sline.find(' ')));
+            printf("base: %s, end: %s", base_addr.c_str(), end_addr.c_str());
+
+            sscanf(base_addr.c_str(), "%x", &base);
+            sscanf(end_addr.c_str(), "%x", &end);
+
+            break;
+        }
+    }
+
+    free(line);
+    if (base == 0) return -1;
+//                                            |firstMatch
+//                                            |current
+//Memory:    +----------------------------------------------------------------------------+
+//pat:                                        +----------+
+//                                            012
+
+    const char* pat = sig;
+    unsigned int firstMatch = 0;
+    for (unsigned int current = base; current < end; current++)
+    {
+        if (!*pat) return firstMatch; // We matched the whole pattern
+        if (pat[0] == '\?' || *(byte*) current == (byte) pat[0]) // Wildcard or match?
+        {
+            if (firstMatch == 0) firstMatch = current; // We just started matching
+            if (!pat[2]) return firstMatch;
+            if (*(uint16_t*) pat == '\?\?' || *(byte*) pat != '\?') pat += 3;
+            else pat += 2;
+        } else
+        {
+            pat = sig;
+            firstMatch = 0;
+        }
+    }
+
+    return -1;
 }

@@ -25,10 +25,11 @@ void hooks::DrawModelExecute(IVModelRender *thisptr, const DrawModelState_t &sta
         auto *entity = g_entityList->GetClientEntity(pInfo.entity_index);
         auto *local = g_entityList->GetClientEntity(g_engineClient->GetLocalPlayer());
         if (!entity || entity->IsDormant() || NET_BYTE(entity, netvar.iLifeState) != LIFE_ALIVE) return;
-        if (NET_INT(local, netvar.iTeamNum) == NET_INT(entity, netvar.iTeamNum)) return;
+        int teamnum = NET_INT(entity, netvar.iTeamNum);
+        if (NET_INT(local, netvar.iTeamNum) == teamnum || teamnum > 3 || teamnum < 2) return;
 
         auto colorInvisible = Color(255, 255, 0);
-        auto colorVisible = Color(0, 0, 255);
+        auto colorVisible = teamnum == 3 ?  Color(0, 0, 255) : Color(255, 0, 0);
 
         if(!flattened)
         {
@@ -60,6 +61,48 @@ void hooks::DrawModelExecute(IVModelRender *thisptr, const DrawModelState_t &sta
     }
 }
 
+class key_value
+{
+public:
+    int m_iKeyName;
+    char *m_sValue;
+    wchar_t *m_wsValue;
+
+    union
+    {
+        int m_iValue;
+        float m_flValue;
+        void *m_pValue;
+        unsigned char m_Color[4];
+    };
+
+    char	m_iDataType;
+    char	m_bHasEscapeSequences;
+    char	m_bEvaluateConditionals;
+    char	unused[1];
+
+    key_value *m_pPeer;
+    key_value *m_pSub;
+    key_value *m_pChain;
+};
+
+//key_value* KVInitialize(key_value* key_valuez, char* name) {
+//    using originalfn = key_value *(__thiscall*)(key_value*, char*);
+//
+//    uint64_t signature = utilities::find_signature("engine.dll", "FF 15 ? ? ? ? 83 C4 08 89 06 8B C6");
+//    signature -= 0x42; static auto initialize = (originalfn)signature;
+//
+//    return initialize(key_valuez, name);
+//}
+//
+//bool KVLoadFromBuffer(key_value* key_valuez, char const* resource_name, const char* buffer) {
+//    using originalfn = int(__thiscall*)(key_value*, char const*, const char*, void*, const char*);
+//    uint64_t signature = utilities::find_signature("engine.dll", "55 8B EC 83 EC 38 53 8B 5D 0C");
+//
+//    static originalfn load_from_the_buffer = (originalfn)signature;
+//    return load_from_the_buffer(key_valuez, resource_name, buffer, null, null);
+//}
+
 IMaterial* createMaterial(const char *materialName, bool flat, bool ignorez, bool wireframe)
 {
     static int created = 0;
@@ -90,12 +133,12 @@ IMaterial* createMaterial(const char *materialName, bool flat, bool ignorez, boo
     snprintf(name, sizeof(name), "#textured_cham_material%i.vmt", created);
     created++;
 
-    auto *keyValues = new KeyValues(baseType);
-    keyValues->LoadFromBuffer(materialName, material);
-
-    typedef IMaterial *(__thiscall * OriginalCreateMaterial) (void* , const char *, KeyValues *);
-    auto *newMaterial = getvfunc<OriginalCreateMaterial> (g_materialSystem, 72) (g_materialSystem, materialName, keyValues);
-    newMaterial->IncrementReferenceCount();
-
-    return newMaterial;
+//    auto *keyValues = (key_value*) malloc(sizeof(key_value));
+//    keyValues->LoadFromBuffer(materialName, material);
+//
+//    typedef IMaterial *(__thiscall * OriginalCreateMaterial) (void* , const char *, KeyValues *);
+//    auto *newMaterial = getvfunc<OriginalCreateMaterial> (g_materialSystem, 72) (g_materialSystem, materialName, keyValues);
+//    newMaterial->IncrementReferenceCount();
+//
+//    return newMaterial;
 }
